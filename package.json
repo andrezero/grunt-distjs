@@ -1,0 +1,50 @@
+{
+  "name": "grunt-distjs",
+  "version": "0.0.1",
+  "description": "Streamline configuration and execution of dist js related tasks.",
+  "author": {
+    "name": "Andre Torgal",
+    "url": "http://andretorgal.com/"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://andrezero.mit-license.org"
+    }
+  ],
+  "keywords": [
+    "grunt",
+    "angularjs",
+    "index",
+    "template",
+    "html",
+    "render",
+    "interpolating"
+  ],
+  "homepage": "https://github.com/andrezero/grunt-distjs",
+  "bugs": "https://github.com/andrezero/grunt-distjs/issues",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/andrezero/grunt-distjs"
+  },
+  "readmeFilename": "README.md",
+  "files": [
+    "grunt-distjs.js"
+  ],
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "grunt": "^0.4.2",
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt": "~0.4.0"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
