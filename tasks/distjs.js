@@ -3,11 +3,6 @@
 module.exports = function (grunt) {
 
     var path = require('path');
-    var extendTask = require('extend-grunt-plugin');
-
-    //var copy = require('grunt-contrib-copy');
-    //var concat = require('grunt-contrib-concat');
-    //var uglify = require('grunt-contrib-uglify');
 
     grunt.registerMultiTask('distjs', 'Streamline configuration and execution of dist js related tasks.', function () {
 
@@ -111,7 +106,7 @@ module.exports = function (grunt) {
 
         // ... THEN add banner to non-minified files
 
-        if (options.noMinsBanner) {
+        if (opts.noMinsBanner) {
 
         }
 

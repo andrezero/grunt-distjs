@@ -14,12 +14,10 @@
   ],
   "keywords": [
     "grunt",
-    "angularjs",
-    "index",
-    "template",
-    "html",
-    "render",
-    "interpolating"
+    "dist",
+    "copy",
+    "concat",
+    "uglify"
   ],
   "homepage": "https://github.com/andrezero/grunt-distjs",
   "bugs": "https://github.com/andrezero/grunt-distjs/issues",
