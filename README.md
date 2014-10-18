@@ -96,14 +96,14 @@ config = {
 }
 ```
 
-In the `main` target we concatenate and uglify our main deliverables and we want to keep the unminified version.
+In the `main` target we concatenate and uglify our main deliverables and we want to keep the non-minified version.
 
 The `foo` and `bar` targets use all the defaults, take some part of our source-code and generate concatenated and
 uglified files in the given destination.
 
 The last target `baz` overrides the 'concat' option in order to copy over a bunch of files to `dist/modules/`, ignoring
 the `src/modules` part of the original paths, but keeping the tree-structure under it. It then applies the defaults to
-generate an uglified `.min.js` of each file and discard the unminified versions.
+generate an uglified `.min.js` of each file and discard the non-minified versions.
 
 Assuming all source files exist, and a deep directory tree exists in `src/modules`, then the above configuration will
 generate the following deliverables:
@@ -249,7 +249,7 @@ Type: `Boolean`
 
 Default: `false`
 
-Whether or not to not keep the un-minified version.
+Whether or not to not keep the non-minified version.
 
 
 #### options.noMinsBanner
@@ -430,9 +430,30 @@ concat:  false
 
 ---
 
-
 ## Roadmap
 
+- test coverage of all configuration options
 - add examples of rename/process using contrib task options
+- add noMinBanner option to add banner to non-minified files
 - integrate task to base64 + embed assets, ideally whitelisting paths and/or URLs and/or file types (eg. fonts, images).
 
+## [MIT License](LICENSE-MIT)
+
+[Copyright (c) 2014 Andre Torgal](http://andrezero.mit-license.org/2014)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
