@@ -32,22 +32,22 @@ module.exports = function (grunt) {
         var dest;
         var config;
         var target = 'jsglue_' + task.target;
+        var srcList;
 
         // concat OR ...
         if (opts.concat) {
             grunt.verbose.writeln('+ concat:' + target + ':');
 
             var concatFile;
-            var srcs;
             this.files.forEach(function (file) {
 
-                srcs = [];
+                srcList = [];
                 file.src.forEach(function (src) {
-                    srcs.push(unixifyPath(path.join(file.orig.cwd || '', src)));
+                    srcList.push(unixifyPath(path.join(file.orig.cwd || '', src)));
                 });
 
                 concatFile = {
-                    src: srcs,
+                    src: srcList,
                     dest: normalizeDest(opts, null, file.dest, file.orig.flatten)
                 };
                 destFiles.push(concatFile);
@@ -72,17 +72,16 @@ module.exports = function (grunt) {
             grunt.verbose.writeln('+ copy:' + target + ':');
 
             // generate a src -> dest map per file being copied
-            var srcs;
             var srcPath;
             var copyFile;
             this.files.forEach(function (file) {
 
-                // srcs is collected just for vebose output
-                srcs = [];
+                // srcList is collected just for vebose output
+                srcList = [];
                 file.src.forEach(function (src) {
 
                     srcPath = unixifyPath(path.join(file.orig.cwd || '', src));
-                    srcs.push(srcPath)
+                    srcList.push(srcPath);
 
                     copyFile = {
                         src: srcPath,
@@ -91,7 +90,7 @@ module.exports = function (grunt) {
                     destFiles.push(copyFile);
                 });
 
-                grunt.verbose.writeln('  + [' + srcs + ' -> ' + file.dest + ']');
+                grunt.verbose.writeln('  + [' + srcList + ' -> ' + file.dest + ']');
             });
 
             // task options, including specific copy options for this target
@@ -145,28 +144,28 @@ module.exports = function (grunt) {
         grunt.verbose.ok();
     });
 
-    var endsWith = function(str, suffix) {
+    var endsWith = function (str, suffix) {
         return str.indexOf(suffix, str.length - suffix.length) !== -1;
-    }
-
-    var isDir = function(dest) {
-       return (endsWith(dest, '/'));
     };
 
-    var fileNameOf = function(dest) {
+    var isDir = function (dest) {
+        return (endsWith(dest, '/'));
+    };
+
+    var fileNameOf = function (dest) {
         var matches = dest.match(/\/([^/]*)$/);
         return matches ? matches[1] : dest;
     };
 
-    var hasExtension = function(dest) {
+    var hasExtension = function (dest) {
         return (endsWith(dest, '.js'));
     };
 
-    var hasMinExtension = function(dest) {
+    var hasMinExtension = function (dest) {
         return (endsWith(dest, '.min.js'));
     };
 
-    var unixifyPath = function(filepath) {
+    var unixifyPath = function (filepath) {
         if (process.platform === 'win32') {
             return filepath.replace(/\\/g, '/');
         } else {
@@ -174,26 +173,23 @@ module.exports = function (grunt) {
         }
     };
 
-    var normalizeDest = function(opts, src, dest, flatten) {
+    var normalizeDest = function (opts, src, dest, flatten) {
         if (!isDir(dest) && !opts.concat) {
             grunt.fail.warn('Cannot copy multiple file into "' + dest + '" Destination must be target directory ending in "/".');
-        }
-        else if (isDir(dest) && opts.concat) {
+        } else if (isDir(dest) && opts.concat) {
             grunt.fail.warn('Cannot copy concat file into "' + dest + '" Destination must be target file name (with optional .js extension).');
-        }
-        else if (isDir(dest)) {
+        } else if (isDir(dest)) {
             dest = dest + (flatten ? fileNameOf(src) : src);
         }
         if (!hasExtension(dest)) {
             dest += (!opts.uglify || opts.keepNoMins) ? '.js' : '.min.js';
-        }
-        else if (hasMinExtension(dest) && (!opts.uglify || opts.keepNoMins)) {
+        } else if (hasMinExtension(dest) && (!opts.uglify || opts.keepNoMins)) {
             dest = dest.replace(/.min.js$/, '.js');
-        }
-        else if (opts.uglify && !opts.keepNoMins) {
+        } else if (opts.uglify && !opts.keepNoMins) {
             dest = dest.replace(/.js$/, '.min.js');
         }
         return dest;
     };
 
 };
+
