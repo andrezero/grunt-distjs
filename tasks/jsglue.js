@@ -1,8 +1,10 @@
 'use strict';
 
-module.exports = function (grunt) {
+var util = require('util');
+var path = require('path');
+var _ = require('lodash');
 
-    var path = require('path');
+module.exports = function (grunt) {
 
     grunt.registerMultiTask('jsglue', 'Streamline configuration and execution of dist js related tasks.', function () {
 
@@ -24,8 +26,8 @@ module.exports = function (grunt) {
         });
 
         // destination files of concat/copy are then taken by uglify
-        // if file is not to be minified or non-minified files are to be kept
-        // destination is .js, otherwise concat/copy destination is immediately named .min.js
+        // if file is not to be minified or non-minified files are to be kept destination is .js
+        // otherwise concat/copy destination is immediately named .min.js
         var destFiles = [];
         var dest;
         var config;
@@ -143,8 +145,12 @@ module.exports = function (grunt) {
         grunt.verbose.ok();
     });
 
+    var endsWith = function(str, suffix) {
+        return str.indexOf(suffix, str.length - suffix.length) !== -1;
+    }
+
     var isDir = function(dest) {
-       return (grunt.util._.endsWith(dest, '/'));
+       return (endsWith(dest, '/'));
     };
 
     var fileNameOf = function(dest) {
@@ -153,11 +159,11 @@ module.exports = function (grunt) {
     };
 
     var hasExtension = function(dest) {
-        return (grunt.util._.endsWith(dest, '.js'));
+        return (endsWith(dest, '.js'));
     };
 
     var hasMinExtension = function(dest) {
-        return (grunt.util._.endsWith(dest, '.min.js'));
+        return (endsWith(dest, '.min.js'));
     };
 
     var unixifyPath = function(filepath) {
