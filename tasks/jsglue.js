@@ -4,7 +4,7 @@ module.exports = function (grunt) {
 
     var path = require('path');
 
-    grunt.registerMultiTask('distjs', 'Streamline configuration and execution of dist js related tasks.', function () {
+    grunt.registerMultiTask('jsglue', 'Streamline configuration and execution of dist js related tasks.', function () {
 
         var task = this;
 
@@ -29,7 +29,7 @@ module.exports = function (grunt) {
         var destFiles = [];
         var dest;
         var config;
-        var target = 'distjs_' + task.target;
+        var target = 'jsglue_' + task.target;
 
         // concat OR ...
         if (opts.concat) {
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
                 options: opts.concat
             };
 
-            // queue the concat task with the custom 'distjs_xxx' target
+            // queue the concat task with the custom 'jsglue_xxx' target
             grunt.config.set('concat.' + target, config);
             grunt.task.run('concat:' + target);
         }
@@ -99,7 +99,7 @@ module.exports = function (grunt) {
                 options: opts.copy
             };
 
-            // queue the copy task with the custom 'distjs_xxx' target
+            // queue the copy task with the custom 'jsglue_xxx' target
             grunt.config.set('copy.' + target, config);
             grunt.task.run('copy:' + target);
         }
@@ -135,7 +135,7 @@ module.exports = function (grunt) {
                 options: opts.uglify
             };
 
-            // queue the uglify task with the custom 'distjs_xxx' target
+            // queue the uglify task with the custom 'jsglue_xxx' target
             grunt.config.set('uglify.' + target, config);
             grunt.task.run('uglify:' + target);
         }

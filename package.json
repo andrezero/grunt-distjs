@@ -1,5 +1,5 @@
 {
-  "name": "grunt-distjs",
+  "name": "grunt-jsglue",
   "version": "0.1.0",
   "description": "Streamline configuration and execution of dist js related tasks.",
   "author": {
@@ -21,11 +21,11 @@
     "concat",
     "uglify"
   ],
-  "homepage": "https://github.com/andrezero/grunt-distjs",
-  "bugs": "https://github.com/andrezero/grunt-distjs/issues",
+  "homepage": "https://github.com/andrezero/grunt-jsglue",
+  "bugs": "https://github.com/andrezero/grunt-jsglue/issues",
   "repository": {
     "type": "git",
-    "url": "git://github.com/andrezero/grunt-distjs"
+    "url": "git://github.com/andrezero/grunt-jsglue"
   },
   "readmeFilename": "README.md",
   "files": [
@@ -37,16 +37,15 @@
     "test": "grunt test"
   },
   "dependencies": {
+  },
+  "peerDependencies": {
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-copy": "~0.4.1",
-    "grunt-contrib-uglify": "~0.2.7"
+    "grunt-contrib-uglify": "~0.2.7",
   },
   "devDependencies": {
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-jshint": "~0.7.2",
     "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt-contrib-uglify": "~0.2.7",
     "grunt": "~0.4.0"
   },
   "engines": {

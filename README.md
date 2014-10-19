@@ -1,5 +1,5 @@
 
-# grunt-distjs
+# grunt-jsglue
 
 > Streamline configuration and execution of dist js related tasks.
 
@@ -15,18 +15,18 @@ If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out th
 1. Install the plugin with this command:
 
 ```shell
-npm install grunt-distjs --save-dev
+npm install grunt-jsglue --save-dev
 ```
 
 2. Add this line to your project's `Gruntfile.js` gruntfile:
 
 ```javascript
-grunt.loadNpmTasks('grunt-distjs');
+grunt.loadNpmTasks('grunt-jsglue');
 ```
 
-## The "distjs" task
+## The "jsglue" task
 
-_Run this task with the `grunt distjs` command._
+_Run this task with the `grunt jsglue` command._
 
 Task targets, files and options may be specified according to the grunt
 [Configuring tasks](http://gruntjs.com/configuring-tasks) guide.
@@ -49,7 +49,7 @@ See the roadmap below for what's planned for later.
 
 ### Configration
 
-Inside your `Gruntfile.js` file, add a section called `distjs`. This section specifies the targets for the `distjs` task
+Inside your `Gruntfile.js` file, add a section called `jsglue`. This section specifies the targets for the `jsglue` task
 and the options you want to pass to each target.
 
 Here's an example configuration:
@@ -57,7 +57,7 @@ Here's an example configuration:
 ```javascript
 config = {
 
-  distjs: {
+  jsglue: {
 
     options: {
       concat: true,
@@ -154,7 +154,7 @@ with the copy specific parameters:
 ```javascript
 config = {
 
-  distjs: {
+  jsglue: {
 
     options: {
       concat: {
@@ -188,7 +188,7 @@ Set `options.copy` to an object to pass configuration to the copy task:
 ```javascript
 config = {
 
-  distjs: {
+  jsglue: {
 
     options: {
       uglify: true,
@@ -224,7 +224,7 @@ with the copy specific parameters:
 ```javascript
 config = {
 
-  distjs: {
+  jsglue: {
 
     options: {
       uglify: {
@@ -267,7 +267,7 @@ These are generic Grunt task parameters that influence _which_ source files are 
 original paths translate to the destination file strucuture.
 
 You can read all about how to configure files in the [Configuring tasks](http://gruntjs.com/configuring-tasks) guide,
-but, because the `distjs` task orchestrates other Grunt tasks, it difers a little from the original tasks, so it's worth
+but, because the `jsglue` task orchestrates other Grunt tasks, it difers a little from the original tasks, so it's worth
 going throught these in detail to demonstrate how you can configure this task to achieve the desired results.
 
 #### dest
@@ -340,7 +340,7 @@ possibilities, including use of glob patterns and template substitution.
 ```javascript
 config = {
 
-  distjs: {
+  jsglue: {
 
     main: {
       src: [
