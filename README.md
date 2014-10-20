@@ -1,5 +1,5 @@
 
-# grunt-jsglue
+# grunt-jsglue [![Build Status: Linux](https://travis-ci.org/andrezero/grunt-jsglue.png?branch=master)](https://travis-ci.org/andrezero/grunt-jsglue)
 
 > Streamline configuration and execution of dist js related tasks.
 
