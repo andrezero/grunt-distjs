@@ -139,7 +139,7 @@ _Note: Options declared in a target will always _OVERRIDE_ the ones declared at 
 
 #### options.concat
 
-Type: `Object|Boolean`
+Type: `Boolean`
 
 Default: `true`
 
@@ -147,30 +147,6 @@ Whether to concatenate the source files using [concat](https://github.com/gruntj
 
 If `options.concat` is not set to `false`, then matching files will be concatenated to the destination, using the
 [concat](https://github.com/gruntjs/grunt-contrib-concat) task defaults.
-
-If you want to set the concat options (separators, banners, footers, ect...) you can set `options.concat` to an object
-with the copy specific parameters:
-
-```javascript
-config = {
-
-  jsglue: {
-
-    options: {
-      concat: {
-        banner: '/* HELLO! */',
-      },
-      uglify: true,
-      keepNoMins: false
-    },
-
-    main: {
-      src: 'src/core/**/*.js',
-      dest: 'dist/mylib'
-    }
-  }
-}
-```
 
 
 #### options.copy

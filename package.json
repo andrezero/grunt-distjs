@@ -19,6 +19,7 @@
     "dist",
     "copy",
     "concat",
+    "minify",
     "uglify"
   ],
   "homepage": "https://github.com/andrezero/grunt-jsglue",
@@ -39,17 +40,15 @@
   "dependencies": {
     "lodash": "~2.4.1"
   },
-  "peerDependencies": {
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-copy": "~0.4.1",
-    "grunt-contrib-uglify": "~0.2.7"
-  },
   "devDependencies": {
     "grunt": "~0.4.0",
     "grunt-bump": "0.0.16",
     "grunt-cli": "^0.1.12",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-jshint": "~0.7.2",
     "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-uglify": "~0.2.7",
     "grunt-conventional-changelog": "~1.1.0",
     "grunt-git-is-clean": "~0.1.1",
     "grunt-jsbeautifier": "~0.2.4",

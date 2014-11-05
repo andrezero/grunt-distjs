@@ -8,148 +8,261 @@ module.exports = function (grunt) {
 
     grunt.registerMultiTask('jsglue', 'Streamline configuration and execution of dist js related tasks.', function () {
 
-        var task = this;
+        var opts = makeOptions(this);
 
-        // default options
-        var opts = this.options({
-            concat: {},
-            copy: {},
-            uglify: {
-                mangle: true,
-                compress: true,
-                beautify: false,
-                sourceMap: false,
-                preserveComments: false
-            },
-            keepNoMins: false,
-            noMinsBanner: null
-        });
-
-        // destination files of concat/copy are then taken by uglify
-        // if file is not to be minified or non-minified files are to be kept destination is .js
-        // otherwise concat/copy destination is immediately named .min.js
+        // used to queue other tasks with uniq targets
+        var target = this.target;
+        var uniqTarget;
+        var queuedTasks = [];
         var destFiles = [];
         var dest;
-        var config;
-        var target = 'jsglue_' + task.target;
+        var taskConfig;
         var srcList;
 
-        // concat OR ...
-        if (opts.concat) {
-            grunt.verbose.writeln('+ concat:' + target + ':');
+        // if file is not to be minified (OR non-minified files are to be kept) then concat/copy destination is .js
+        // otherwise concat/copy destination is immediately set to .min.js
 
-            var concatFile;
+        // -- CONCAT or COPY
+
+        if (opts.concat) {
+            uniqTarget = makeUniqTarget(target);
+            grunt.verbose.writeln('+ concat:' + uniqTarget + ':');
+
+            // generate a src -> dest map per concat destination
+            var concatDest;
             this.files.forEach(function (file) {
 
                 srcList = [];
                 file.src.forEach(function (src) {
-                    srcList.push(unixifyPath(path.join(file.orig.cwd || '', src)));
+                    src = path.join(file.orig.cwd || '', src);
+                    srcList.push(src);
                 });
 
-                concatFile = {
-                    src: srcList,
-                    dest: normalizeDest(opts, null, file.dest, file.orig.flatten)
-                };
-                destFiles.push(concatFile);
+                // validate destination is a file name (not a directory!)
+                validateConcatDest(file.dest);
 
-                grunt.verbose.writeln('  + [' + concatFile.src + ' -> ' + concatFile.dest + ']');
+                // add/translate the extension
+                // if we don't want to keep the non-minified files, files are concatenated straight to .min.js
+                concatDest = opts.keepNoMins ? addExtension(file.dest, '.js', '.min.js') : addExtension(file.dest, '.min.js', '.js');
+
+                destFiles.push({
+                    src: srcList,
+                    dest: concatDest
+                });
+
+                grunt.verbose.writeln('  + [' + srcList + ' -> ' + concatDest + ']');
             });
 
             // task options, including specific concat options for this target
-            // Grunt will apply any 'concat' defaults if a'concat.options' exists in config
-            config = {
+            taskConfig = {
                 files: destFiles,
                 options: opts.concat
             };
 
-            // queue the concat task with the custom 'jsglue_xxx' target
-            grunt.config.set('concat.' + target, config);
-            grunt.task.run('concat:' + target);
-        }
-
-        // ... OR copy ...
-        else {
-            grunt.verbose.writeln('+ copy:' + target + ':');
+            // queue the concat task with a uniq target name
+            queuedTasks.push(queueTask('concat', uniqTarget, taskConfig));
+        } else {
+            uniqTarget = makeUniqTarget(target);
+            grunt.verbose.writeln('+ copy:' + uniqTarget + ':');
 
             // generate a src -> dest map per file being copied
-            var srcPath;
-            var copyFile;
+            var copyDest;
             this.files.forEach(function (file) {
 
                 // srcList is collected just for vebose output
-                srcList = [];
                 file.src.forEach(function (src) {
 
-                    srcPath = unixifyPath(path.join(file.orig.cwd || '', src));
-                    srcList.push(srcPath);
+                    // validate destination is a directory name (not a file name!)
+                    validateCopyDest(file.dest);
 
-                    copyFile = {
-                        src: srcPath,
-                        dest: normalizeDest(opts, src, file.dest, file.orig.flatten)
-                    };
-                    destFiles.push(copyFile);
+                    // add the name of the file being copied (if flatten, ignore the path on src file name))
+                    // add/translate the extension
+                    // if we don't want to keep the non-minified files, files are copied straight to .min.js
+                    copyDest = file.dest + (file.orig.flatten ? fileNameOf(src) : src);
+                    copyDest = opts.keepNoMins ? addExtension(copyDest, '.js', '.min.js') : addExtension(concatDest, '.min.js', '.js');
+
+                    // resolve original filename to avoid passing cwd again to copy
+                    src = path.join(file.orig.cwd || '', src);
+
+                    destFiles.push({
+                        src: src,
+                        dest: copyDest
+                    });
+
+                    grunt.verbose.writeln('  + [' + src + ' -> ' + copyDest + ']');
                 });
-
-                grunt.verbose.writeln('  + [' + srcList + ' -> ' + file.dest + ']');
             });
 
-            // task options, including specific copy options for this target
-            // Grunt will apply any 'copy' defaults if a'copy.options' exists in config
-            config = {
+            taskConfig = {
                 files: destFiles,
                 options: opts.copy
             };
 
-            // queue the copy task with the custom 'jsglue_xxx' target
-            grunt.config.set('copy.' + target, config);
-            grunt.task.run('copy:' + target);
+            // queue the copy task with a uniq target name
+            queuedTasks.push(queueTask('copy', uniqTarget, taskConfig));
         }
 
-        // ... THEN add banner to non-minified files
+        // -- UGLIFY --
 
-        if (opts.noMinsBanner) {
-
-        }
-
-        // ... and THEN uglify
-        if (opts.uglify) {
-            grunt.verbose.writeln('+ uglify:' + target + ':');
+        if (opts.minify) {
+            uniqTarget = makeUniqTarget(target);
+            grunt.verbose.writeln('+ uglify:' + uniqTarget + ':');
 
             // generate a [src, src, src, src ...] -> dest map per file being generated
             var uglifyFiles = [];
-            var uglifyFile;
+            var uglifyDest;
             destFiles.forEach(function (file) {
 
-                uglifyFile = {
-                    src: file.dest,
-                    dest: file.dest.replace(/.js$/, '.min.js')
-                };
-                uglifyFiles.push(uglifyFile);
+                uglifyDest = addExtension(file.dest, '.min.js', '.js');
 
-                grunt.verbose.writeln('  + [' + uglifyFile.src + ' -> ' + uglifyFile.dest + ']');
+                uglifyFiles.push({
+                    src: file.dest,
+                    dest: uglifyDest
+                });
+
+                grunt.verbose.writeln('  + [' + file.dest + ' -> ' + uglifyDest + ']');
             });
 
-            // task options, including specific uglify options for this target
-            // Grunt will apply any 'uglify' defaults if a'uglify.options' exists in config
-            config = {
+            taskConfig = {
                 files: uglifyFiles,
                 options: opts.uglify
             };
 
-            // queue the uglify task with the custom 'jsglue_xxx' target
-            grunt.config.set('uglify.' + target, config);
-            grunt.task.run('uglify:' + target);
+            // queue the uglify task with a uniq target name
+            queuedTasks.push(queueTask('uglify', uniqTarget, taskConfig));
         }
 
-        grunt.verbose.ok();
+        grunt.log.ok('queued tasks: ' + grunt.log.wordlist(queuedTasks));
     });
 
-    var endsWith = function (str, suffix) {
-        return str.indexOf(suffix, str.length - suffix.length) !== -1;
+    /**
+     * @param {object} task instance
+     */
+    var makeOptions = function (task) {
+
+        // -- default options
+
+        // make sure underlying task defaults are not applied
+        var defaults = {
+            concat: {
+                separator: grunt.util.linefeed,
+                footer: '',
+                stripBanners: false,
+                process: false,
+                sourceMap: false,
+                sourceMapName: undefined,
+                sourceMapStyle: 'embed'
+            },
+            copy: {
+                process: false,
+                noProcess: false,
+                encoding: grunt.file.defaultEncoding,
+                mode: false,
+                timestamp: false
+            },
+            uglify: {
+                mangle: true,
+                compress: true,
+                beautify: false,
+                report: false,
+                sourceMap: false,
+                sourceMapName: undefined,
+                sourceMapIn: undefined,
+                sourceMapIncludeSources: false,
+                enclose: undefined,
+                wrap: undefined,
+                maxLineLen: 32000,
+                ASCIIOnly: false,
+                exportAll: false,
+                preserveComments: false,
+                banner: '',
+                footer: ''
+            }
+        };
+
+        // -- get user options (with defaults applied)
+
+        var opts = task.options({
+            concat: defaults.concat,
+            uglify: defaults.uglify,
+            copy: defaults.copy,
+            output: 'both',
+            banner: '',
+            bannerOn: 'both',
+        });
+
+        // -- validate options
+
+        var validOutputs = ['clean', 'minified', 'both'];
+
+        if (validOutputs.indexOf(opts.output) === -1) {
+            grunt.fail.warn('Invalid output option: "' + opts.output + '". Valid options: ["' + validOutputs.join('", "') + '"].');
+        }
+        if (validOutputs.indexOf(opts.bannerOn) === -1) {
+            grunt.fail.warn('Invalid bannerOn option: "' + opts.bannerOn + '". Valid options: ["' + validOutputs.join('", "') + '"].');
+        }
+
+        // useful shortcuts
+        opts.minify = _.contains(['minified', 'both'], opts.output);
+        opts.keepNoMins = _.contains(['clean', 'both'], opts.output);
+
+        // -- override with hardcoded dist behaviour
+
+        var bannerOnMins = _.contains(['minified', 'both'], opts.bannerOn);
+        var bannerOnNoMins = _.contains(['clean', 'both'], opts.bannerOn);
+
+        /**
+         * fn processor for adding banner during copy
+         * @param {string} content
+         */
+        var addBanner = function (content) {
+            return opts.banner + content;
+        };
+
+        // - adds banner to non minified files during the copy/concat operation
+        // - (re)adds banner during uglify
+        var overrides = {
+            concat: {
+                banner: (opts.keepNoMins && bannerOnNoMins) ? opts.banner : ''
+            },
+            copy: {
+                banner: (opts.keepNoMins && bannerOnNoMins) ? addBanner : null
+            },
+            uglify: {
+                banner: (opts.keepNoMins && bannerOnMins) ? opts.banner : ''
+            }
+        };
+
+        // aply overrides (one by one because _.extend is shallow)
+        _.extend(opts.concat, overrides.concat);
+        _.extend(opts.copy, overrides.copy);
+        _.extend(opts.uglify, overrides.uglify);
+
+        return opts;
     };
 
-    var isDir = function (dest) {
-        return (endsWith(dest, '/'));
+    var randomHash = function (count) {
+        if (count === 1) {
+            return parseInt(16 * Math.random(), 10).toString(16);
+        } else {
+            var hash = '';
+            for (var ix = 0; ix < count; ix++) {
+                hash += randomHash(1);
+            }
+            return hash;
+        }
+    };
+
+    var makeUniqTarget = function (target) {
+        var uniqTarget = target + '_' + randomHash(6);
+        return uniqTarget;
+    };
+
+    var queueTask = function (name, target, config) {
+        var taskName = name + ':' + target;
+        grunt.config.set(name + '.' + target, config);
+        grunt.task.run(taskName);
+        return taskName;
     };
 
     var fileNameOf = function (dest) {
@@ -157,39 +270,29 @@ module.exports = function (grunt) {
         return matches ? matches[1] : dest;
     };
 
-    var hasExtension = function (dest) {
-        return (endsWith(dest, '.js'));
-    };
+    var validateConcatDest = function (dest) {
 
-    var hasMinExtension = function (dest) {
-        return (endsWith(dest, '.min.js'));
-    };
-
-    var unixifyPath = function (filepath) {
-        if (process.platform === 'win32') {
-            return filepath.replace(/\\/g, '/');
-        } else {
-            return filepath;
+        if (_.endsWith(dest, '/')) {
+            grunt.fail.warn('Can not copy concat files into "' + dest + '". Destination must be a target file name (with optional .js extension).');
         }
     };
 
-    var normalizeDest = function (opts, src, dest, flatten) {
-        if (!isDir(dest) && !opts.concat) {
-            grunt.fail.warn('Cannot copy multiple file into "' + dest + '" Destination must be target directory ending in "/".');
-        } else if (isDir(dest) && opts.concat) {
-            grunt.fail.warn('Cannot copy concat file into "' + dest + '" Destination must be target file name (with optional .js extension).');
-        } else if (isDir(dest)) {
-            dest = dest + (flatten ? fileNameOf(src) : src);
+    var validateCopyDest = function (dest) {
+
+        if (!_.endsWith(dest, '/')) {
+            grunt.fail.warn('Can not copy multiple files into "' + dest + '". Destination must be a target directory name with trailing "/".');
         }
-        if (!hasExtension(dest)) {
-            dest += (!opts.uglify || opts.keepNoMins) ? '.js' : '.min.js';
-        } else if (hasMinExtension(dest) && (!opts.uglify || opts.keepNoMins)) {
-            dest = dest.replace(/.min.js$/, '.js');
-        } else if (opts.uglify && !opts.keepNoMins) {
-            dest = dest.replace(/.js$/, '.min.js');
-        }
-        return dest;
     };
 
+    var addExtension = function (filename, extensionToAdd, extensionToReplace) {
+        // remove extensionToReplace if present
+        if (extensionToReplace && _.endsWith(filename, extensionToReplace)) {
+            filename = filename.substr(0, filename.length - extensionToReplace.length);
+        }
+        if (!_.endsWith(filename, extensionToAdd)) {
+            filename += extensionToAdd;
+        }
+        return filename;
+    };
 };
 
