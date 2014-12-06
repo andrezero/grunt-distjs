@@ -5,14 +5,15 @@ var path = require('path');
 var _ = require('lodash');
 
 // waiting for lodash 3.0
-_.endsWith = function(string, target, position) {
+var nativeMin = Math.min;
+_.endsWith = function (string, target, position) {
     string = string == null ? '' : String(string);
     target = String(target);
 
     var length = string.length;
-    position = (typeof position == 'undefined' ? length : nativeMin(position < 0 ? 0 : (+position || 0), length)) - target.length;
-    return position >= 0 && string.indexOf(target, position) == position;
-}
+    position = (typeof position === 'undefined' ? length : nativeMin(position < 0 ? 0 : (+position || 0), length)) - target.length;
+    return position >= 0 && string.indexOf(target, position) === position;
+};
 
 module.exports = function (grunt) {
 
