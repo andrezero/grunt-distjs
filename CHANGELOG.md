@@ -1,3 +1,13 @@
+<a name="0.1.4"></a>
+### 0.1.4 (2014-12-06)
+
+
+#### Bug Fixes
+
+* missing lodash var nativeMin ([c6c0fd3e](http://github.com/andrezero/grunt-jsglue/commit/c6c0fd3e0b0b4a565b0db45c3f526fdb662a75f1))
+* waiting for lodash 3.0 ([0d76b949](http://github.com/andrezero/grunt-jsglue/commit/0d76b949e101b11b3a547f946428228daaa58033))
+
+
 <a name="0.1.3"></a>
 ### 0.1.3 (2014-11-05)
 
