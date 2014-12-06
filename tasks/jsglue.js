@@ -4,6 +4,16 @@ var util = require('util');
 var path = require('path');
 var _ = require('lodash');
 
+// waiting for lodash 3.0
+_.endsWith = function(string, target, position) {
+    string = string == null ? '' : String(string);
+    target = String(target);
+
+    var length = string.length;
+    position = (typeof position == 'undefined' ? length : nativeMin(position < 0 ? 0 : (+position || 0), length)) - target.length;
+    return position >= 0 && string.indexOf(target, position) == position;
+}
+
 module.exports = function (grunt) {
 
     grunt.registerMultiTask('jsglue', 'Streamline configuration and execution of dist js related tasks.', function () {
@@ -285,6 +295,7 @@ module.exports = function (grunt) {
     };
 
     var addExtension = function (filename, extensionToAdd, extensionToReplace) {
+
         // remove extensionToReplace if present
         if (extensionToReplace && _.endsWith(filename, extensionToReplace)) {
             filename = filename.substr(0, filename.length - extensionToReplace.length);
