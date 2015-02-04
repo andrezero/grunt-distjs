@@ -1,4 +1,7 @@
-# grunt-jsglue [![Build Status: Linux](http://img.shields.io/travis/andrezero/grunt-jsglue/master.svg?style=flat-square)](https://travis-ci.org/andrezero/grunt-jsglue) [![npm version](http://img.shields.io/npm/v/grunt-jsglue.svg?style=flat-square)](https://npmjs.org/grunt-jsglue)
+# grunt-jsglue
+
+[![Build Status: Linux](http://img.shields.io/travis/andrezero/grunt-jsglue/master.svg?style=flat-square)](https://travis-ci.org/andrezero/grunt-jsglue)
+[![NPM version](http://img.shields.io/npm/v/grunt-jsglue.svg?style=flat-square)](https://npmjs.org/grunt-jsglue)
 
 > Grunt task: streamlines configuration and execution of js related tasks.
 
