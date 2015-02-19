@@ -124,7 +124,8 @@ module.exports = function (grunt) {
             var uglifyDest;
             destFiles.forEach(function (file) {
 
-                uglifyDest = addExtension(file.dest, '.min.js', '.js');
+                var extensionToReplace = opts.keepNoMins ? '.js' : '.min.js';
+                uglifyDest = addExtension(file.dest, '.min.js', extensionToReplace);
 
                 uglifyFiles.push({
                     src: file.dest,
