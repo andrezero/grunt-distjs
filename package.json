@@ -1,6 +1,6 @@
 {
   "name": "grunt-jsglue",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Streamline configuration and execution of dist js related tasks.",
   "author": {
     "name": "Andre Torgal",
