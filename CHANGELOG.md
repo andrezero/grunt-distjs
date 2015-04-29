@@ -1,3 +1,12 @@
+<a name="0.1.6"></a>
+### 0.1.6 (2015-04-29)
+
+
+#### Bug Fixes
+
+* **compress:** https://github.com/gruntjs/grunt-contrib-uglify/issues/298 ([226498ce](http://github.com/andrezero/grunt-jsglue/commit/226498ce428e38b13e80c5a930095734d1124bdd))
+
+
 <a name="0.1.4"></a>
 ### 0.1.4 (2014-12-06)
 
